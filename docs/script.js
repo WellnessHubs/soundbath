@@ -1,27 +1,29 @@
-now = Tone.now();
+var bassNotes, electricPianoNotes, gongNotes, highHatsNotes, kickNotes;
+var bassSampler, pianoSampler, gongSampler, hhSampler, kickSampler; 
 
-async function playMusic() {
+async function loadMidiFiles() {
     const bass = await Midi.fromUrl("./music/Bass.mid");
-    const bassNotes = bass.tracks[0].notes;
+    bassNotes = bass.tracks[0].notes;
 
     const electricPiano = await Midi.fromUrl("./music/ElecPiano.mid");
-    const electricPianoNotes = electricPiano.tracks[0].notes;
+    electricPianoNotes = electricPiano.tracks[0].notes;
 
     const gong = await Midi.fromUrl("./music/Gong.mid");
-    const gongNotes = gong.tracks[0].notes;
+    gongNotes = gong.tracks[0].notes;
 
-    const highHats = await Midi.fromUrl("./music/Hihats.mid");
-    const highHatsNotes = highHats.tracks[0].notes;
+    const highHats = await Midi.fromUrl("./music/HiHats.mid");
+    highHatsNotes = highHats.tracks[0].notes;
 
     const kick = await Midi.fromUrl("./music/Kick.mid");
-    const KickNotes = kick.tracks[0].notes;
+    KickNotes = kick.tracks[0].notes;
 
-    const pad = await Midi.fromUrl("./music/Pad.mid");
-    const padNotes = pad.tracks[0].notes;
+    // const pad = await Midi.fromUrl("./music/Pad.mid");
+    // const padNotes = pad.tracks[0].notes;
 
-    now = Tone.now() + 1.0;
+}
 
-    var bassSampler = new Tone.Sampler({
+async function loadInstruments() {
+    bassSampler = new Tone.Sampler({
         "D2": "./music/Bass_D2.mp3",
     }, function () {
         let bassVolume = document.getElementById("bass-volume-control");
@@ -35,13 +37,10 @@ async function playMusic() {
         bassMute.addEventListener("click", function (e) {
             bassSampler.volume.value = -60;
         });
-
-        playNotes(bassNotes, bassSampler);
-
     }).toMaster();
 
-    var pianoSampler = new Tone.Sampler({
-        "D2": "./music/ElecPiano.mp3",
+    pianoSampler = new Tone.Sampler({
+        "B3": "./music/ElecPiano_B3_1bar.mp3",
     }, function () {
         let electricPianoVolume = document.getElementById("electric-piano-volume-control");
         pianoSampler.volume.value = electricPianoVolume.value;
@@ -49,11 +48,9 @@ async function playMusic() {
         electricPianoVolume.addEventListener("change", function (e) {
             pianoSampler.volume.value = e.currentTarget.value;
         });
-
-        playNotes(electricPianoNotes, pianoSampler);
     }).toMaster();
 
-    var gongSampler = new Tone.Sampler({
+    gongSampler = new Tone.Sampler({
         "B2": "./music/Gong_B2.mp3",
     }, function () {
         let gongVolume = document.getElementById("gong-volume-control");
@@ -62,11 +59,9 @@ async function playMusic() {
         gongVolume.addEventListener("change", function (e) {
             gongSampler.volume.value = e.currentTarget.value;
         });
-
-        playNotes(gongNotes, gongSampler);
     }).toMaster();
 
-    var hhSampler = new Tone.Sampler({
+    hhSampler = new Tone.Sampler({
         "D2": "./music/HiHat_D2.mp3",
     }, function () {
         let hhVolume = document.getElementById("hh-volume-control");
@@ -75,11 +70,9 @@ async function playMusic() {
         hhVolume.addEventListener("change", function (e) {
             hhSampler.volume.value = e.currentTarget.value;
         });
-
-        playNotes(highHatsNotes, hhSampler);
     }).toMaster();
 
-    var kickSampler = new Tone.Sampler({
+    kickSampler = new Tone.Sampler({
         "D2": "./music/Kick_D2.mp3",
     }, function () {
         let kickVolume = document.getElementById("kick-volume-control");
@@ -88,28 +81,56 @@ async function playMusic() {
         kickVolume.addEventListener("change", function (e) {
             kickSampler.volume.value = e.currentTarget.value;
         });
-
-        playNotes(KickNotes, kickSampler);
     }).toMaster();
 
-    var padSampler = new Tone.Sampler({
-        "D2": "./music/Pad.mp3",
-    }, function () {
-        let padVolume = document.getElementById("pad-volume-control");
-        padSampler.volume.value = padVolume.value;
+    // var padSampler = new Tone.Sampler({
+    //     "D2": "./music/Pad.mp3",
+    // }, function () {
+    //     let padVolume = document.getElementById("pad-volume-control");
+    //     padSampler.volume.value = padVolume.value;
 
-        padVolume.addEventListener("change", function (e) {
-            padSampler.volume.value = e.currentTarget.value;
-        });
+    //     padVolume.addEventListener("change", function (e) {
+    //         padSampler.volume.value = e.currentTarget.value;
+    //     });
 
-        playNotes(padNotes, padSampler);
-    }).toMaster();
+    //     playNotes(padNotes, padSampler);
+    // }).toMaster();
 }
 
-async function playNotes(notes, instrument) {
+function convertNotes(notes) {
+    let result = [];
     notes.forEach(note => {
-        console.log(note);
-        instrument.triggerAttackRelease(note.name, note.duration, note.time + now, note.velocity);
+        let object = {};
+        object.time = note.time;
+        object.note = note.name;
+        object.duration = note.duration;     
+        result.push(object);
     })
-    
+    return result;
+}
+
+async function playMusic() {
+    await loadMidiFiles();
+    await loadInstruments();
+
+    const bassPart = new Tone.Part(function(time, note) {
+        bassSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(bassNotes)).start(0);
+
+      const pianoPart = new Tone.Part(function(time, note) {
+        pianoSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(electricPianoNotes)).start(0);
+
+    // Tone.Transport.scheduleRepeat( function(time) {
+    //     playNotes(bassNotes, bassSampler, time);
+    //     playNotes(electricPianoNotes, pianoSampler, time);
+    //     playNotes(gongNotes, gongSampler, time);
+    //     playNotes(highHatsNotes, hhSampler, time);
+    //     playNotes(KickNotes, kickSampler, time);
+    // });
+
+    Tone.Transport.bpm.value = 80;
+    // Tone.Transport.bpm.rampTo(120, 10);
+
+    Tone.Transport.start();
 }

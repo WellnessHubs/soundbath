@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tonejs Midi</title>
+	<title>Soundbath</title>
 	<script type="text/javascript" src="https://unpkg.com/@tonejs/midi"></script>
 	<script type="text/javascript" src="https://unpkg.com/tone@13.4.9"></script>
 	<script type="text/javascript" src="https://unpkg.com/@tonejs/ui@0.0.8"></script>
     <script type="text/javascript" src="./script.js"></script>
+	<link rel="stylesheet" href="./style.css"></link>
 </head>
 <body>
+	<div class="wrapper"></div>
+	<a class="ghost-button" href="#">Pause Experience</a>
 	<button onclick="playMusic()">Click to Play</button>
 
 	<br />
@@ -17,7 +20,7 @@
 
 	<br />
 	<label>Electric Piano</label>
-	<input type="range" id="electric-piano-volume-control" min="-20" max="20" value="0" step="1">
+	<input type="range" id="electric-piano-volume-control" min="-20" max="20" value="10" step="1">
 
 	<br />
 	<label>Gong</label>
