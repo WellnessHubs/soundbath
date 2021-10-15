@@ -10,9 +10,11 @@
 </head>
 <body>
 	<div class="wrapper"></div>
-	<a class="ghost-button" href="#">Pause Experience</a>
-	<button onclick="playMusic()">Click to Play</button>
+	<div id="control-buttons">
+		<button class="ghost-button" href="#" onclick="togglePlayer()">Toggle Experience</button>
+	</div>
 
+	<div class="test-sliders">
 	<br />
 	<label>Bass</label>
 	<input type="range" id="bass-volume-control" min="-20" max="20" value="0" step="1">
@@ -37,6 +39,7 @@
 	<br />
 	<label>Pad</label>
 	<input type="range" id="pad-volume-control" min="-20" max="20" value="0" step="1">
+</div>
 
 </body>
 </html>

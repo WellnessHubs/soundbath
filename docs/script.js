@@ -1,4 +1,4 @@
-var bassNotes, electricPianoNotes, gongNotes, highHatsNotes, kickNotes;
+var bassNotes, electricPianoNotes, gongNotes, highHatsNotes, c;
 var bassSampler, pianoSampler, gongSampler, hhSampler, kickSampler; 
 
 async function loadMidiFiles() {
@@ -15,7 +15,7 @@ async function loadMidiFiles() {
     highHatsNotes = highHats.tracks[0].notes;
 
     const kick = await Midi.fromUrl("./music/Kick.mid");
-    KickNotes = kick.tracks[0].notes;
+    kickNotes = kick.tracks[0].notes;
 
     // const pad = await Midi.fromUrl("./music/Pad.mid");
     // const padNotes = pad.tracks[0].notes;
@@ -121,16 +121,27 @@ async function playMusic() {
         pianoSampler.triggerAttackRelease(note.note, note.duration, time);
       }, convertNotes(electricPianoNotes)).start(0);
 
-    // Tone.Transport.scheduleRepeat( function(time) {
-    //     playNotes(bassNotes, bassSampler, time);
-    //     playNotes(electricPianoNotes, pianoSampler, time);
-    //     playNotes(gongNotes, gongSampler, time);
-    //     playNotes(highHatsNotes, hhSampler, time);
-    //     playNotes(KickNotes, kickSampler, time);
-    // });
+      const gongPart = new Tone.Part(function(time, note) {
+        gongSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(gongNotes)).start(0);
+
+      const hhPart = new Tone.Part(function(time, note) {
+        hhSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(highHatsNotes)).start(0);
+
+      const kickPart = new Tone.Part(function(time, note) {
+        kickSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(kickNotes)).start(0);
 
     Tone.Transport.bpm.value = 80;
     // Tone.Transport.bpm.rampTo(120, 10);
+}
 
-    Tone.Transport.start();
+playMusic();
+
+var musicOn = false;
+
+function togglePlayer() {
+    musicOn ? Tone.Transport.pause() : Tone.Transport.start();
+    musicOn = !musicOn;
 }
