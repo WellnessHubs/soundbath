@@ -4,6 +4,7 @@ var bassSampler, pianoSampler, gongSampler, hhSampler, kickSampler;
 async function loadMidiFiles() {
     const bass = await Midi.fromUrl("./music/Bass.mid");
     bassNotes = bass.tracks[0].notes;
+    console.log(bass.tracks[0]);
 
     const electricPiano = await Midi.fromUrl("./music/ElecPiano.mid");
     electricPianoNotes = electricPiano.tracks[0].notes;
@@ -103,9 +104,12 @@ function convertNotes(notes) {
         let object = {};
         object.time = note.time;
         object.note = note.name;
-        object.duration = note.duration;     
+        object.duration = note.duration;  
+        object.octave = note.octave;   
         result.push(object);
     })
+
+    console.log(result);
     return result;
 }
 
