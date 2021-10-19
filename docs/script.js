@@ -1,45 +1,44 @@
-var bassNotes, electricPianoNotes, gongNotes, highHatsNotes, c;
-var bassSampler, pianoSampler, gongSampler, hhSampler, kickSampler; 
+var bassNotes, electricPianoNotes, gongNotes, highHatsNotes; // Variables for the notes from each MIDI file.
+var bassSampler, pianoSampler, gongSampler, hhSampler, kickSampler; // Variables for each "instrument".
 
+/* loadMidiFiles: a function that loads all the midi files in the music folder and extracts the notes. */
 async function loadMidiFiles() {
-    const bass = await Midi.fromUrl("./music/Bass.mid");
-    bassNotes = bass.tracks[0].notes;
-    console.log(bass.tracks[0]);
+    // Load in the Bass MIDI file.
+    const bass = await Midi.fromUrl("./music/Bass.mid"); // Load in the MIDI file and convert it to a Tone.js-friendly JSON object.
+    bassNotes = bass.tracks[0].notes; // Extract the notes.
 
+    // Load in the Electric Piano MIDI file.
     const electricPiano = await Midi.fromUrl("./music/ElecPiano.mid");
     electricPianoNotes = electricPiano.tracks[0].notes;
 
+    // Load in the Gong MIDI file.
     const gong = await Midi.fromUrl("./music/Gong.mid");
     gongNotes = gong.tracks[0].notes;
 
+    // Load in the High Hats MIDI file.
     const highHats = await Midi.fromUrl("./music/HiHats.mid");
     highHatsNotes = highHats.tracks[0].notes;
 
+    // Load in the Kick MIDI file.
     const kick = await Midi.fromUrl("./music/Kick.mid");
     kickNotes = kick.tracks[0].notes;
-
-    // const pad = await Midi.fromUrl("./music/Pad.mid");
-    // const padNotes = pad.tracks[0].notes;
-
 }
 
+/* loadInstruments: a function that creates "instruments" with audio files. */
 async function loadInstruments() {
+    // Create the Bass "instrument" with sample audio.
     bassSampler = new Tone.Sampler({
-        "D2": "./music/Bass_D2.mp3",
+        "D2": "./music/Bass_D2.mp3", // Assign a D2 to a sample audio of a Bass instrument playing a D2.
     }, function () {
         let bassVolume = document.getElementById("bass-volume-control");
-        bassSampler.volume.value = bassVolume.value;
+        bassSampler.volume.value = bassVolume.value; // Set the current volume to the slider's current value.
 
-        bassVolume.addEventListener("change", function (e) {
-            bassSampler.volume.value = e.currentTarget.value;
-        });
-
-        let bassMute = document.getElementById("bass-mute");
-        bassMute.addEventListener("click", function (e) {
-            bassSampler.volume.value = -60;
+        bassVolume.addEventListener("change", function (e) { // Everytime the slider changes...
+            bassSampler.volume.value = e.currentTarget.value; // Set the current volume to the current slider's current value.
         });
     }).toMaster();
 
+    // Create the Electric Piano "instrument" with sample audio.
     pianoSampler = new Tone.Sampler({
         "B3": "./music/ElecPiano_B3_1bar.mp3",
     }, function () {
@@ -51,6 +50,7 @@ async function loadInstruments() {
         });
     }).toMaster();
 
+    // Create the Gong "instrument" with sample audio.
     gongSampler = new Tone.Sampler({
         "B2": "./music/Gong_B2.mp3",
     }, function () {
@@ -62,6 +62,7 @@ async function loadInstruments() {
         });
     }).toMaster();
 
+    // Create the High Hats "instrument" with sample audio.
     hhSampler = new Tone.Sampler({
         "D2": "./music/HiHat_D2.mp3",
     }, function () {
@@ -73,6 +74,7 @@ async function loadInstruments() {
         });
     }).toMaster();
 
+    // Create the Kick "instrument" with sample audio.
     kickSampler = new Tone.Sampler({
         "D2": "./music/Kick_D2.mp3",
     }, function () {
@@ -98,54 +100,60 @@ async function loadInstruments() {
     // }).toMaster();
 }
 
+/* convertNotes: a function that takes in a list of notes from a Tone.js-friendly JSON object and converts it into a list of note objects that the Part object can read. */
 function convertNotes(notes) {
     let result = [];
     notes.forEach(note => {
         let object = {};
-        object.time = note.time;
-        object.note = note.name;
-        object.duration = note.duration;  
-        object.octave = note.octave;   
+        object.time = note.time; // Extract the note time.
+        object.note = note.name; // Extract the note name.
+        object.duration = note.duration; // Extract the note duration.
+        object.octave = note.octave; 
         result.push(object);
     })
 
-    console.log(result);
+    // console.log(result);
     return result;
 }
 
-async function playMusic() {
-    await loadMidiFiles();
-    await loadInstruments();
+/* defineMusic: a function that loads the MIDI files, creates the instruments, and assigns the parts. */
+async function defineMusic() {
+    await loadMidiFiles(); // Loads the MIDI files.
+    await loadInstruments(); // Creates the instruments.
 
-    const bassPart = new Tone.Part(function(time, note) {
-        bassSampler.triggerAttackRelease(note.note, note.duration, time);
-      }, convertNotes(bassNotes)).start(0);
+    // Create the bass instrument.
+     const bassPart = new Tone.Part(function(time, note) { // At each time instance...
+        bassSampler.triggerAttackRelease(note.note, note.duration, time); // Play the next note in the note array.
+      }, convertNotes(bassNotes)).start(0); // Insert the node array; start at time 0.
 
+    // Create the electric piano instrument.
       const pianoPart = new Tone.Part(function(time, note) {
         pianoSampler.triggerAttackRelease(note.note, note.duration, time);
       }, convertNotes(electricPianoNotes)).start(0);
 
+    // Create the gong instrument.
       const gongPart = new Tone.Part(function(time, note) {
         gongSampler.triggerAttackRelease(note.note, note.duration, time);
       }, convertNotes(gongNotes)).start(0);
 
+    // Create the high hats instrument.
       const hhPart = new Tone.Part(function(time, note) {
         hhSampler.triggerAttackRelease(note.note, note.duration, time);
       }, convertNotes(highHatsNotes)).start(0);
 
+    // Create the kick instrument.
       const kickPart = new Tone.Part(function(time, note) {
         kickSampler.triggerAttackRelease(note.note, note.duration, time);
       }, convertNotes(kickNotes)).start(0);
 
-    Tone.Transport.bpm.value = 80;
-    // Tone.Transport.bpm.rampTo(120, 10);
+    Tone.Transport.bpm.value = 80; // Set the beats per minute to 80.
 }
 
-playMusic();
+defineMusic(); // Call define music when the page loads.
+var musicOn = false; // Initialize the music player to off.
 
-var musicOn = false;
-
+/* togglePlayer: a function that toggles the music player on and off. */
 function togglePlayer() {
-    musicOn ? Tone.Transport.pause() : Tone.Transport.start();
-    musicOn = !musicOn;
+    musicOn ? Tone.Transport.pause() : Tone.Transport.start(); // If the music is on, turn it off. Vice versa.
+    musicOn = !musicOn; // Toggle the player.
 }
