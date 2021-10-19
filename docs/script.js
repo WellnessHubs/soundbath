@@ -18,10 +18,12 @@ async function loadMidiFiles() {
     // Load in the High Hats MIDI file.
     const highHats = await Midi.fromUrl("./music/Soundbath_MIDI_10.19/Part4.mid");
     highHatsNotes = highHats.tracks[0].notes;
+    console.log(highHatsNotes);
 
     // Load in the Kick MIDI file.
     const kick = await Midi.fromUrl("./music/Soundbath_MIDI_10.19/Part5.mid");
     kickNotes = kick.tracks[0].notes;
+    
 }
 
 /* loadInstruments: a function that creates "instruments" with audio files. */
@@ -107,8 +109,7 @@ function convertNotes(notes) {
         let object = {};
         object.time = note.time; // Extract the note time.
         object.note = note.name; // Extract the note name.
-        object.duration = note.duration; // Extract the note duration.
-        object.velocity = note.velocity; 
+        object.duration = note.duration + 0.25; // Extract the note duration.
         object.octave = note.octave;
         result.push(object);
     })
@@ -122,10 +123,10 @@ async function defineMusic() {
     await loadMidiFiles(); // Loads the MIDI files.
     await loadInstruments(); // Creates the instruments.
 
-    // Create the bass instrument.
-     const bassPart = new Tone.Part(function(time, note) { // At each time instance...
-        bassSampler.triggerAttackRelease(note.note, note.duration, time, note.velocity); // Play the next note in the note array.
-      }, convertNotes(bassNotes)).start(0); // Insert the node array; start at time 0.
+    // // Create the bass instrument.
+    //  const bassPart = new Tone.Part(function(time, note) { // At each time instance...
+    //     bassSampler.triggerAttackRelease(note.note, note.duration, time); // Play the next note in the note array.
+    //   }, convertNotes(bassNotes)).start(0); // Insert the node array; start at time 0.
 
     // // Create the electric piano instrument.
     //   const pianoPart = new Tone.Part(function(time, note) {
@@ -141,13 +142,14 @@ async function defineMusic() {
     //   const hhPart = new Tone.Part(function(time, note) {
     //     hhSampler.triggerAttackRelease(note.note, note.duration, time);
     //   }, convertNotes(highHatsNotes)).start(0);
+    //   console.log(hhSampler);
 
-    // // Create the kick instrument.
-    //   const kickPart = new Tone.Part(function(time, note) {
-    //     kickSampler.triggerAttackRelease(note.note, note.duration, time);
-    //   }, convertNotes(kickNotes)).start(0);
+    // Create the kick instrument.
+      const kickPart = new Tone.Part(function(time, note) {
+        kickSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(kickNotes)).start(0);
 
-    Tone.Transport.bpm.value = 80; // Set the beats per minute to 80.
+    Tone.Transport.bpm.value = 60; // Set the beats per minute to 80.
 }
 
 defineMusic(); // Call define music when the page loads.
