@@ -150,6 +150,12 @@ async function defineMusic() {
       }, convertNotes(kickNotes)).start(0);
 
     Tone.Transport.bpm.value = 60; // Set the beats per minute to 80.
+
+    bassSampler.release = 1;
+    pianoSampler.release = 1;
+    gongSampler.release = 1;
+    hhSampler.release = 1;
+    kickSampler.release = 1;
 }
 
 defineMusic(); // Call define music when the page loads.
