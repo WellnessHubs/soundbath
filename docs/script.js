@@ -123,26 +123,26 @@ async function defineMusic() {
     await loadMidiFiles(); // Loads the MIDI files.
     await loadInstruments(); // Creates the instruments.
 
-    // // Create the bass instrument.
-    //  const bassPart = new Tone.Part(function(time, note) { // At each time instance...
-    //     bassSampler.triggerAttackRelease(note.note, note.duration, time); // Play the next note in the note array.
-    //   }, convertNotes(bassNotes)).start(0); // Insert the node array; start at time 0.
+    // Create the bass instrument.
+     const bassPart = new Tone.Part(function(time, note) { // At each time instance...
+        bassSampler.triggerAttackRelease(note.note, note.duration, time); // Play the next note in the note array.
+      }, convertNotes(bassNotes)).start(0); // Insert the node array; start at time 0.
 
-    // // Create the electric piano instrument.
-    //   const pianoPart = new Tone.Part(function(time, note) {
-    //     pianoSampler.triggerAttackRelease(note.note, note.duration, time);
-    //   }, convertNotes(electricPianoNotes)).start(0);
+    // Create the electric piano instrument.
+      const pianoPart = new Tone.Part(function(time, note) {
+        pianoSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(electricPianoNotes)).start(0);
 
-    // // Create the gong instrument.
-    //   const gongPart = new Tone.Part(function(time, note) {
-    //     gongSampler.triggerAttackRelease(note.note, note.duration, time);
-    //   }, convertNotes(gongNotes)).start(0);
+    // Create the gong instrument.
+      const gongPart = new Tone.Part(function(time, note) {
+        gongSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(gongNotes)).start(0);
 
-    // // Create the high hats instrument.
-    //   const hhPart = new Tone.Part(function(time, note) {
-    //     hhSampler.triggerAttackRelease(note.note, note.duration, time);
-    //   }, convertNotes(highHatsNotes)).start(0);
-    //   console.log(hhSampler);
+    // Create the high hats instrument.
+      const hhPart = new Tone.Part(function(time, note) {
+        hhSampler.triggerAttackRelease(note.note, note.duration, time);
+      }, convertNotes(highHatsNotes)).start(0);
+      console.log(hhSampler);
 
     // Create the kick instrument.
       const kickPart = new Tone.Part(function(time, note) {
