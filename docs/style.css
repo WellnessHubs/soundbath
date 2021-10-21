@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Merienda&family=Montserrat:wght@100&display=swap');
+
 html, body {
   height: 100%;
   overflow: hidden;
@@ -62,4 +64,27 @@ html, body {
 .test-sliders {
   position: absolute;
   z-index: 1;
+}
+
+.ghost-button {
+  display: block;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  border-color: #ffffff00;
+  transition: all 1.5s ease-in-out;
+  color: #ffffff00;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ghost-button:hover {
+  transition: all 1.5s ease-in-out;
+  border: 1px solid #ffffff50;
+  color: #ffffff50;
 }
