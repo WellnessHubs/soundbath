@@ -1,4 +1,4 @@
-var part1Notes, part2Notes, part3Notes, part4Notes, part5Notes; // Variables for the notes from each MIDI file.
+var part1Notes, part2Notes, part3Notes, part4Notes, part5Notes, part6Notes; // Variables for the notes from each MIDI file.
 var part1Sampler, part2Sampler, part3Sampler, part4Sampler, part5Sampler; // Variables for each "instrument".
 
 var songDuration = Number.MIN_VALUE;
@@ -161,7 +161,7 @@ async function defineMusic() {
   Tone.Transport.loopStart = 0;
   Tone.Transport.loopEnd = songDuration + 6;
 
-  Tone.Transport.schedule((time) => {
+  Tone.Transport.schedule(() => {
     part4Sampler.volume.rampTo(0, "16:0:0");
   }, "0:0:0");
 
