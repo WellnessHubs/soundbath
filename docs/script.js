@@ -99,7 +99,7 @@ async function loadInstruments() {
   part4Sampler = new Tone.Sampler({
     "D5": "./music/Soundbath_Audio_10.19/Part4.wav",
   }, function () {
-    part4Sampler.volume.value = 0;
+    part4Sampler.volume.value = -5;
   }).toMaster();
 
   // Create the Kick "instrument" with sample audio.
@@ -145,7 +145,8 @@ function generateLowerNotes(noteName) {
   if (Number.parseInt(number) > 0) {
     number = Number.parseInt(number) - 1;
   }
-  console.log(noteName + " to " + noteName.substring(0, noteName.length - 1) + number);
+
+  // console.log(noteName + " to " + noteName.substring(0, noteName.length - 1) + number);
   return noteName.substring(0, noteName.length - 1) + number;
 }
 
@@ -156,7 +157,7 @@ function convertNotes(notes, lowerOctave) {
     let object = {};
     object.time = note.time; // Extract the note time.
     object.note = lowerOctave ? generateLowerNotes(note.name) : note.name; // Extract the note name.
-    object.duration = note.duration + 0.25; // Extract the note duration.
+    object.duration = note.duration + 1; // Extract the note duration.
     object.octave = note.octave;
     result.push(object);
   })
@@ -214,8 +215,14 @@ async function defineMusic() {
     part9Sampler.triggerAttackRelease(note.note, note.duration, time);
   }, convertNotes(currentSong.phase2.part9.notes, true)).start(0);
 
+  let part10SecondNote = true;
   const part10 = new Tone.Part(function (time, note) {
-    part10Sampler.triggerAttackRelease(note.note, note.duration, time);
+    if (part10SecondNote) {
+      part10Sampler.triggerAttackRelease(note.note, note.duration, time);
+    } else {
+      part10Sampler.triggerAttackRelease(note.note.substring(0, note.note.length - 1) + 2, note.duration, time);  
+    }
+    part10SecondNote = !part10SecondNote;
   }, convertNotes(currentSong.phase2.part10.notes, true)).start(0);
 
   Tone.Transport.bpm.value = 80; // Set the beats per minute to 80.
@@ -229,7 +236,7 @@ async function defineMusic() {
   part7Sampler.release = 1;
   part8Sampler.release = 1;
   part9Sampler.release = 1;
-  part10Sampler.release = 1;
+  part10Sampler.release = 2;
 
   Tone.Transport.loop = true;
   Tone.Transport.setLoopPoints(0, songDuration + 6);
